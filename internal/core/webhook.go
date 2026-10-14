@@ -1,12 +1,12 @@
 package core
 
 type Webhook struct {
-	EventType string  `json:"event_type,omitempty"`
-	OrderId   string  `json:"order_id,omitempty"`
-	Amount    float64 `json:"amount,omitempty"`
-	TargetUrl string  `json:"target_url,omitempty"`
+	EventType string  `json:"event_type,omitempty" validate:"required"`
+	OrderId   string  `json:"order_id,omitempty" validate:"required"`
+	Amount    float64 `json:"amount,omitempty" validate:"required"`
+	TargetUrl string  `json:"target_url,omitempty" validate:"required"`
 }
 
 const (
-	WehbhookStream = "webhook:raw"
+	WebhookStream = "webhook:raw"
 )

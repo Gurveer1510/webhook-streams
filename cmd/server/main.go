@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"time"
 	"webhookstream/internal/db/redis"
@@ -12,7 +13,10 @@ import (
 
 func main() {
 
-	redis := redis.NewRedisClient()
+	redis, err := redis.NewRedisClient()
+	if err != nil {
+		log.Fatalf("ERROR: %v", err.Error())
+	}
 	WebhookUsecase := usecase.NewWebhookUsecase(redis)
 	WebHookHandler := handler.NewHandler(WebhookUsecase)
 
@@ -23,7 +27,7 @@ func main() {
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 5 * time.Second,
 		IdleTimeout:  5 * time.Second,
-		Handler:      &router,
+		Handler:      router,
 	}
 
 	fmt.Println("Server started at :8080")

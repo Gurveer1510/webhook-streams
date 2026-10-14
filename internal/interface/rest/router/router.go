@@ -7,10 +7,10 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func NewRouter(webhookHandler handler.Handler) mux.Router {
+func NewRouter(webhookHandler handler.Handler) http.Handler {
 	router := mux.NewRouter()
 
-	router.HandleFunc("/webhook",webhookHandler.HandleWebhook).Methods(http.MethodPost)
+	router.HandleFunc("/webhook", webhookHandler.HandleWebhook).Methods(http.MethodPost)
 
-	return *router
+	return router
 }

@@ -3,7 +3,6 @@ package usecase
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"webhookstream/internal/core"
 
 	"github.com/redis/go-redis/v9"
@@ -19,19 +18,20 @@ func NewWebhookUsecase(r *redis.Client) *WebhookUsecase {
 	}
 }
 
-func (w *WebhookUsecase) WebhookUsecase(ctx context.Context, wh core.Webhook) {
+func (w *WebhookUsecase) WebhookUsecase(ctx context.Context, wh core.Webhook) (string, error) {
 	byteData, err := json.Marshal(wh)
 	if err != nil {
-		fmt.Printf("ERROR: %v", err.Error())
+		return "", err
 	}
-	res := w.redis.XAdd(ctx, &redis.XAddArgs{
-		Stream: core.WehbhookStream,
-		Values: byteData,
-	})
+	id, err := w.redis.XAdd(ctx, &redis.XAddArgs{
+		Stream: core.WebhookStream,
+		Values: map[string]interface{}{
+			"payload": string(byteData),
+		},
+	}).Result()
 
-	if res.Err() != nil {
-		fmt.Printf("ERROR: %v", err)
+	if err != nil {
+		return "", err
 	}
-	result, _ :=res.Result()
-	fmt.Printf("RESULT: %v \n", result)
+	return id, nil
 }
